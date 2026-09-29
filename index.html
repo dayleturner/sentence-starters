@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grammar Phrase Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #f4f6f8;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+    .tab-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+    .tab-button {
+      padding: 12px 20px;
+      font-size: 15px;
+      font-weight: bold;
+      border: 2px solid #3498db;
+      border-radius: 8px;
+      background-color: #ffffff;
+      color: #3498db;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+    .tab-button:hover {
+      background-color: #3498db;
+      color: #ffffff;
+    }
+    .tab-button.active {
+      background-color: #2980b9;
+      border-color: #2980b9;
+      color: #ffffff;
+    }
+    .display-card {
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      min-height: 150px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .type-title {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #7f8c8d;
+      margin-bottom: 15px;
+    }
+    .result-text {
+      font-size: 22px;
+      color: #2c3e50;
+      line-height: 1.4;
+      margin-bottom: 25px;
+    }
+    .action-button {
+      padding: 10px 24px;
+      font-size: 14px;
+      background-color: #2ecc71;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .action-button:hover {
+      background-color: #27ae60;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Grammar Phrase & Clause Selector</h1>
+
+  <div class="tab-container">
+    <button class="tab-button" onclick="selectType('participial')">Participial Phrases</button>
+    <button class="tab-button" onclick="selectType('infinitive')">Infinitive Phrases</button>
+    <button class="tab-button" onclick="selectType('appositive')">Appositive Phrases</button>
+    <button class="tab-button" onclick="selectType('dependent')">Dependent Clauses</button>
+  </div>
+
+  <div class="display-card">
+    <div id="typeTitle" class="type-title">Select a phrase or clause category</div>
+    <div id="resultText" class="result-text">Click any category above to pick a random phrase or clause.</div>
+    <button id="generateBtn" class="action-button" onclick="generateRandom()" style="display: none;">Pick Another</button>
+  </div>
+
+  <script>
+    const data = {
+      participial: [
+        "Having used all her energy on the long hike",
+        "Walking through the quiet park",
+        "Feeling tired after a long day",
+        "Moving like a scared chicken",
+        "Looking out over the ocean",
+        "Excited about the upcoming trip",
+        "Driven by ambition",
+        "Wandering through the ancient market",
+        "Knowing the answer immediately",
+        "Inspired by the beautiful scenery",
+        "Running towards the finish line",
+        "Frightened by the sudden loud noise",
+        "Laughing uncontrollably at the joke",
+        "Surprised by the unexpected news",
+        "Searching for her lost keys",
+        "Thinking about the future",
+        "Singing along to the radio",
+        "Standing on top of the mountain",
+        "Broken by the strong winds",
+        "Delighted by the warm welcome"
+      ],
+      infinitive: [
+        "To improve her running stamina",
+        "To prepare for the big presentation",
+        "To pass the exam",
+        "To avoid being caught",
+        "To master a second language",
+        "To finish the project on time",
+        "To bake a delicious chocolate cake",
+        "To explore new places",
+        "To make a positive impact",
+        "To learn how to play the piano",
+        "To solve the complex problem",
+        "To build a solid foundation",
+        "To organize the clutter in the garage",
+        "To earn a college degree",
+        "To stay focused during study hours",
+        "To write an engaging story",
+        "To design a functional website",
+        "To keep everyone safe and healthy",
+        "To create lasting memories",
+        "To practice daily meditation"
+      ],
+      appositive: [
+        "A passionate painter",
+        "An experienced chef",
+        "A skilled writer",
+        "The former world champion",
+        "A dedicated high school teacher",
+        "An avid reader of mystery novels",
+        "The capital city of Hawaii",
+        "A talented musician",
+        "An enthusiastic neighborhood volunteer",
+        "The lead scientist on the research project",
+        "A lifelong resident of the town",
+        "An energetic young puppy",
+        "The founder of the local charity",
+        "A master craftsman",
+        "An accomplished distance runner",
+        "The official school mascot",
+        "A seasoned tour guide",
+        "An award-winning architect",
+        "The captain of the soccer team",
+        "A quiet seaside village"
+      ],
+      dependent: [
+        "Although it was raining heavily",
+        "Because he finished his work early",
+        "Although I ate a hamburger steak plate lunch",
+        "If I need help",
+        "Whenever the bell rings",
+        "Until the sun sets over the horizon",
+        "Since you are already here",
+        "Before we start the meeting",
+        "As soon as the train arrives",
+        "While she was reading her book",
+        "Unless we hurry up",
+        "After the rain finally stopped",
+        "Even though they worked all night",
+        "Wherever you want to go",
+        "Because the power went out",
+        "Since we have enough time",
+        "If you decide to join us",
+        "Although the test was challenging",
+        "While the music was playing",
+        "Before the concert begins"
+      ]
+    };
+
+    let currentCategory = '';
+
+    const titleMap = {
+      participial: "Participial Phrase",
+      infinitive: "Infinitive Phrase",
+      appositive: "Appositive (Noun) Phrase",
+      dependent: "Dependent Clause"
+    };
+
+    function selectType(category) {
+      currentCategory = category;
+      
+      const buttons = document.querySelectorAll('.tab-button');
+      buttons.forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      document.getElementById('typeTitle').innerText = titleMap[category];
+      document.getElementById('generateBtn').style.display = 'inline-block';
+      
+      generateRandom();
+    }
+
+    function generateRandom() {
+      if (!currentCategory) return;
+      const list = data[currentCategory];
+      const randomIndex = Math.floor(Math.random() * list.length);
+      document.getElementById('resultText').innerText = `"${list[randomIndex]}"`;
+    }
+  </script>
+
+</body>
+</html>
